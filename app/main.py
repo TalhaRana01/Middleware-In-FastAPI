@@ -1,35 +1,13 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
+from app.middlewares import my_first_middleware, my_second_middleware
 
 
 app = FastAPI()
 
-# Creating Middleware
-@app.middleware("http")
-async def my_first_middleware(request: Request, call_next):
-  print("Middleware: Before processing the request")
-  print(f"Request:{request.method} {request.url}")
-  
-  response = await call_next(request)
-  
-  print("1 Middleware: After processing the request, Before returning  the response")
-  print(f"Response status code :{response.status_code}")
-  
-  
-  return response
+app.middleware("http")(my_first_middleware)
+app.middleware("http")(my_second_middleware)
 
 
-@app.middleware("http")
-async def my_second_middleware(request: Request, call_next):
-  print("2 Middleware: Before processing the request")
-  print(f"Request:{request.method} {request.url}")
-  
-  response = await call_next(request)
-  
-  print("Middleware: After processing the request, Before returning  the response")
-  print(f"Response status code :{response.status_code}")
-  
-  
-  return response
 
 @app.get("/users")
 async def get_users():
